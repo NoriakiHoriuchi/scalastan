@@ -199,7 +199,7 @@ class CmdStanRunner(
     val initialValueHash = writeInitialValue(compiledModel)
     val runHash = computeRunHash(dataHash, initialValueHash, method)
     val baseSeed = if (seed < 0) (System.currentTimeMillis % Int.MaxValue).toInt else seed
-    val results = Vector.range(0, chains).par.flatMap { chainIndex =>
+    val results = Vector.range(0, chains).flatMap { chainIndex =>
       val chainSeed = ((baseSeed.toLong + chainIndex) % Int.MaxValue).toInt
       val outputName = outputFileName(runHash, seed, chainIndex)
       val outputFile = new File(s"$modelDir/$outputName")
@@ -221,11 +221,11 @@ class CmdStanRunner(
           Some(r)
         case _ => runChain(context)
       }
-    }.seq
+    }
 
-    val parameterChains = results.flatMap(_.iterations).groupBy(_._1).mapValues(_.map(_._2))
+    val parameterChains = results.flatMap(_.iterations).groupBy(_._1).mapValues(_.map(_._2)).toVector
     val massMatrices = results.map(_.massMatrix)
-    StanResults(parameterChains, massMatrices, compiledModel, method)
+    StanResults(parameterChains.toMap, massMatrices, compiledModel, method)
   }
 }
 

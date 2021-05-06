@@ -345,7 +345,7 @@ case class StanResults(
 
     // Build a mapping of name -> chain -> iteration -> value
     val names = parameterChains.keys
-    val results: Seq[(String, Seq[Seq[Double]])] = names.par.flatMap { name =>
+    val results: Seq[(String, Seq[Seq[Double]])] = names.flatMap { name =>
       cleanName(name, mapping).map { cleanedName =>
         cleanedName -> parameterChains(name)
       }
@@ -363,7 +363,7 @@ case class StanResults(
     )
 
     // Compute the statistics.
-    val data: Seq[(String, Seq[Double])] = results.par.map { case (name, values) =>
+    val data: Seq[(String, Seq[Double])] = results.map { case (name, values) =>
       val summary = SummaryStats(values)
       name -> stats.map(s => s._2.apply(summary))
     }.seq

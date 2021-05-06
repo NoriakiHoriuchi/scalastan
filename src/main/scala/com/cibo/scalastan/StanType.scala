@@ -92,11 +92,11 @@ sealed trait StanType {
   )(
     f: (Int, Int) => SCALA_TYPE
   ): Vector[Vector[SCALA_TYPE]] = {
-    parameterChains.head._2.zipWithIndex.par.map { case (chain, chainIndex) =>
+    parameterChains.head._2.zipWithIndex.map { case (chain, chainIndex) =>
       Vector.tabulate[SCALA_TYPE](chain.size) { iterationIndex =>
         f(chainIndex, iterationIndex)
       }
-    }.seq
+    }
   }
 
   // Parse data from the iterations CSV.
