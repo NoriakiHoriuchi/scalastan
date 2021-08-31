@@ -46,3 +46,5 @@ libraryDependencies ++= {
   else
     Seq()
 }
+
+assembly/assemblyOption := (assembly/assemblyOption).value.withIncludeScala(false)
